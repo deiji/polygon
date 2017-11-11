@@ -44,8 +44,10 @@ public class Polygon {
         } catch (Exception e){
             logger.error(e.getMessage());
         }
-        //need to be done because last point the same as first
-        points.remove(points.size() - 1);
+        //check whether last point is the same as first
+        if(points.get(0).equals(points.get(points.size() - 1))) {
+            points.remove(points.size() - 1);
+        }
         logger.debug("Size of points list after removing last element: " + points.size());
         return points;
     }
