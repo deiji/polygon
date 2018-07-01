@@ -17,24 +17,14 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class InsertPolygonToDbTimeTest {
     private static final Logger logger = LogManager.getLogger(InsertPolygonToDbTimeTest.class);
-    static File[] polygonFiles = new File[]{
-            new File(PolygonCheck.class.getClassLoader().getResource("polygons/KYIV.geojson").getFile()),
-            new File(PolygonCheck.class.getClassLoader().getResource("polygons/REG3.geojson").getFile()),
-            new File(PolygonCheck.class.getClassLoader().getResource("polygons/REG4.geojson").getFile()),
-            new File(PolygonCheck.class.getClassLoader().getResource("polygons/WEAK.geojson").getFile())
-    };
+
     static boolean[] results = new boolean[]{
             true,
             true,
             true,
             true
-    };;
-    static String[] polygonNames = new String[]{
-            "Kyiv",
-            "reg3",
-            "reg4",
-            "weak"
     };
+
     private File polygon;
     private boolean expected;
     private String polygonName;
@@ -52,12 +42,14 @@ public class InsertPolygonToDbTimeTest {
     {
 
         Collection pairs = new ArrayList();
-        for (int i = 0; i < polygonNames.length; i++){
+        int i = 0;
+        for (String polygon : TestingData.polygonNames){
             pairs.add(new Object[]{
-                    polygonFiles[i],
+                    TestingData.polygons.get(polygon),
                     results[i],
-                    polygonNames[i]
+                    TestingData.polygonNames[i]
             });
+            i++;
         }
         return pairs;
     }

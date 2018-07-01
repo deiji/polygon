@@ -15,7 +15,9 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Utils {
     static String insertPoint = "insert into maximo.polygons (name, polygon, insertby, insertdate) " +
@@ -24,12 +26,12 @@ public class Utils {
 
     private static final Logger logger = LogManager.getLogger(Utils.class);
 
-    public static ArrayList<JsonNode> parseFile(ArrayList<String> files){
+    public static ArrayList<JsonNode> parseFile(ArrayList<File> files){
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
         try {
             ArrayList<JsonNode> jsonNodes = new ArrayList<>();
-            for(String file : files) {
+            for(File file : files) {
                 jsonNodes.add(objectMapper.readTree(file));
             }
             return jsonNodes;
@@ -46,15 +48,14 @@ public class Utils {
      * the list of PolygonPoint objects
      * @return list of PolygonPoint object
      */
-    public static FullPolygon generatePolygon(ArrayList<JsonNode> jsonNodes){
-        FullPolygon polygon = new FullPolygon();
+    public static Map<String, FullPolygon> generatePolygon(ArrayList<JsonNode> jsonNodes){
+        Map<String, FullPolygon> polygons = new HashMap<>();
         for (JsonNode jsonNode : jsonNodes) {
             List<PolygonArea> polygonArea = new ArrayList<>();
             String name = jsonNode.get("name").asText();
             try {
                 JsonNode coordinates = jsonNode.findValue("coordinates");
                 for (int i = 0; i < coordinates.size(); i++) {
-
                     JsonNode arrayOfPoints = coordinates.get(i);
                     List<PolygonPoint> points = new ArrayList<>();
                     for (int j = 0; j < arrayOfPoints.size(); j++) {
@@ -84,13 +85,13 @@ public class Utils {
                             polygonArea.add(new PolygonArea("polygon", points));
                         }
                     }
-                    polygon = new FullPolygon(polygonArea, name);
                 }
+                polygons.put(name, new FullPolygon(polygonArea, name));
             } catch (Exception e) {
                 logger.error(e.getMessage());
             }
         }
-        return polygon;
+        return polygons;
     }
 
     /**

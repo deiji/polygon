@@ -7,6 +7,13 @@ import polygon.PolygonPoint;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Command for converting TAB to GeoJSON
+ * ogr2ogr -f "GeoJSON" 1800-indoor.geojson coverage_LTE1800_Indoor.TAB
+ * or this (  )
+ * ogr2ogr -f "GeoJSON" -t_srs "EPSG:27700" output.geojson input.TAB
+ */
+
 public class PolygonUtils {
     /**
      * Method that parses Map with polygon and holes
@@ -93,7 +100,7 @@ public class PolygonUtils {
             BigDecimal d = testY.subtract(YI);
             BigDecimal e = c.multiply(d);
             BigDecimal f = YJ.subtract(YI);
-            BigDecimal g = e.divide(f, 15, BigDecimal.ROUND_HALF_UP);
+            BigDecimal g = f.compareTo(BigDecimal.ZERO) == 0 ? new BigDecimal(0) : e.divide(f, 15, BigDecimal.ROUND_HALF_UP);
             BigDecimal h = g.add(XI);
             boolean k = testX.compareTo(h) < 0;
 
@@ -140,7 +147,7 @@ public class PolygonUtils {
     public static boolean checkIfPointBetweenTwoVertices(PolygonPoint first, PolygonPoint second, PolygonPoint test){
         BigDecimal i = first.getX().subtract(second.getX());
         BigDecimal j = first.getY().subtract(second.getY());
-        BigDecimal m = i.divide(j, 15, BigDecimal.ROUND_HALF_UP);
+        BigDecimal m = j.compareTo(BigDecimal.ZERO) == 0 ? new BigDecimal(0) : i.divide(j, 15, BigDecimal.ROUND_HALF_UP);
         BigDecimal mx = m.multiply(first.getX());
         BigDecimal b = first.getY().subtract(mx);
 
